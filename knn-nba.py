@@ -11,11 +11,10 @@ def convertNum(num):
 def euclideanDistance(a, b):
     distance = 0
     for x in range(len(a)):
-        #print sums[year][x]
         distance += pow(convertNum(a[x]) - convertNum(b[x]), 2)
-        #print float(b[x])/sums[year][x]
     return math.sqrt(distance)
 
+# Count how the numbers for each labels
 def count_labels(list):
     label_dist = ["Top 10 picks", "Mid 1st round", "Late 1st round",
                    "Early 2nd round", "Mid 2nd round", "Late 2nd round/undrafted"]
@@ -26,6 +25,7 @@ def count_labels(list):
     return label_dist[index]
 
 
+# The main training dataset
 nba = {}
 
 # reading in data
@@ -53,8 +53,10 @@ for i in range(2007, 2017):
 # classfication
 file = open("2003.txt","r")
 for line in file.readlines()[2:]:
-        # stat is in the order of Rank,FG%,3P%,FT%,MP,PTS,TRB,AST,Year
+
+        # player name
         print [line.split(",")[3]]
+        
         stat_list = line.split(",")
         stat = [line.split(",")[1]]
 
