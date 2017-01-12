@@ -29,7 +29,7 @@ def count_labels(list):
 nba = {}
 
 # reading in data
-for i in range(2007, 2017):
+for i in range(2001, 2017):
     name = str(i) + ".txt"
     file = open(name, "r")
 
@@ -43,7 +43,7 @@ for i in range(2007, 2017):
         stat = [stat_list[1]]
 
         stat += [stat_list[18]] # WS, win share
-        stat += [stat_list[20]] * 50 # BPM, Box plus, Minus
+        stat += [convertNum(stat_list[20]) * 20]  # BPM, Box plus, Minus
         stat += [stat_list[21]] # VORP, value over replacement player
         stat += [i]
 
@@ -51,25 +51,30 @@ for i in range(2007, 2017):
 
 
 # classfication
-file = open("2003.txt","r")
-for line in file.readlines()[2:]:
+test_year = str(2003)
+file = open(test_year+".txt","r")
+for line in file.readlines()[2:30]:
         # stat is in the order of Rank,FG%,3P%,FT%,MP,PTS,TRB,AST,Year
         print [line.split(",")[3]]
         stat_list = line.split(",")
         stat = [line.split(",")[1]]
 
         stat += [stat_list[18]] # WS, win share
-        stat += [stat_list[20]] * 50 # BPM
+        stat += [convertNum(stat_list[20]) * 20] # BPM
         stat += [stat_list[21]] # BPM
         stat += [2003]
 
         result = {}
         for key in nba.keys():
+            if nba[key][len(nba[key])-1] == int(test_year):
+                continue
             result[key] = euclideanDistance(nba[key][1:-1],stat[1:-1])
         result = sorted(result.items(), key = lambda x: x[1])
         labels = []
         # set the k here
         k = 20
+
         for people in result[:k]:
             labels.append(int(nba[people[0]][0]))
+        print labels
         print count_labels(labels)
