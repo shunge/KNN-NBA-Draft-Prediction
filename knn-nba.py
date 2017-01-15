@@ -68,7 +68,7 @@ for line in file.readlines()[2:60]:
         #print np.array(stat).reshape(-1, 1)
 
 # ---------------------- Result visualization ---------------------- #
-        print neigh.predict(np.array(stat))
+        print neigh.predict([np.array(stat)])
 # ---------------------- Evaluate Result ---------------------- #
 # Emprical evaluation:
 # The result is more for entertaining purpose, it gives an approximation of how good a player actually is
