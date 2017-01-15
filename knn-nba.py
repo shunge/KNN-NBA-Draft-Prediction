@@ -1,5 +1,8 @@
+
+# ------------------------ Load Library ------------------------ #
 import math
 
+# ---------------------- Helper functions ---------------------- #
 # convert string into float
 def convertNum(num):
     try:
@@ -23,13 +26,15 @@ def count_labels(list):
     for num in sorted(list)[1:-1]:
         label_counting [(num-1)/10] +=1
     index = label_counting.index(max(label_counting))
+    print label_counting
     return label_dist[index]
 
 
+# ---------------------- Load dataset ---------------------- #
 nba = {}
 
 # reading in data
-for i in range(2001, 2017):
+for i in range(1999, 2017):
     name = str(i) + ".txt"
     file = open(name, "r")
 
@@ -49,11 +54,11 @@ for i in range(2001, 2017):
 
         nba[line.split(",")[3]] = stat
 
-
+# ---------------------- Train model ---------------------- #
 # classfication
 test_year = str(2003)
 file = open(test_year+".txt","r")
-for line in file.readlines()[2:30]:
+for line in file.readlines()[2:60]:
         # stat is in the order of Rank,FG%,3P%,FT%,MP,PTS,TRB,AST,Year
         print [line.split(",")[3]]
         stat_list = line.split(",")
@@ -64,6 +69,7 @@ for line in file.readlines()[2:30]:
         stat += [stat_list[21]] # BPM
         stat += [2003]
 
+# ---------------------- Predict result ---------------------- #
         result = {}
         for key in nba.keys():
             if nba[key][len(nba[key])-1] == int(test_year):
@@ -72,9 +78,24 @@ for line in file.readlines()[2:30]:
         result = sorted(result.items(), key = lambda x: x[1])
         labels = []
         # set the k here
-        k = 20
+        k = 50
 
+# ---------------------- Result visualization ---------------------- #
         for people in result[:k]:
             labels.append(int(nba[people[0]][0]))
-        print labels
         print count_labels(labels)
+
+
+# ---------------------- Evaluate Result ---------------------- #
+# Emprical evaluation:
+# The result is more for entertaining purpose, it gives an approximation of how good a player actually is
+# The result has shown that:
+# Superstars like LeBron, Wade, Melo, and Bosh are definetely Top 10 picks
+# Good starting players like David West, Boris Diaw are top 10 picks as well.
+# Role players like Chris Kaman, Kirk Hinrich, Hayes, are likely to be pick mid 1st round.
+# Players like Xue Yuyang, Andreas Glyniadakis, Paccelis Morlende
+# that never play in the league, will stay 2nd round mid, late pick
+# Kyle Korver, an All star NBA player, and an exceptional shooter, was picked 2nd round mid before, but according to
+# our prediction, he will be picked top 10, which is totally logical,
+# Darko Milicic, was picked 2nd, despite 9 years in the league, does not belong to the top 10 picks
+# The result shifts slightly when the k changes.
