@@ -2,6 +2,7 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
+from matplotlib import pyplot as plt
 
 position_labels = []
 player_features = []
@@ -60,6 +61,9 @@ for line in testing_data.readlines()[1:]:
     result = neigh.predict([np.array(stat)])
     if stat_list[6] != result[0]:
         wrong += 1
+
+# ---------------------- Result visualization ---------------------- #
+    print stat_list[6], result[0]
     total += 1
 
 # ---------------------- Evaluate Result ---------------------- #
