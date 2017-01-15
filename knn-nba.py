@@ -1,6 +1,8 @@
 
 # ------------------------ Load Library ------------------------ #
-import math
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import NearestNeighbors
+import numpy as np
 
 # ---------------------- Helper functions ---------------------- #
 # convert string into float
@@ -10,28 +12,14 @@ def convertNum(num):
     except ValueError:
         return 0
 
-# calculate the distance between two players
-def euclideanDistance(a, b):
-    distance = 0
-    for x in range(len(a)):
-        #print sums[year][x]
-        distance += pow(convertNum(a[x]) - convertNum(b[x]), 2)
-        #print float(b[x])/sums[year][x]
-    return math.sqrt(distance)
-
-def count_labels(list):
+def return_label(num):
     label_dist = ["Top 10 picks", "Mid 1st round", "Late 1st round",
                    "Early 2nd round", "Mid 2nd round", "Late 2nd round/undrafted"]
-    label_counting = [0,0,0,0,0,0]
-    for num in sorted(list)[1:-1]:
-        label_counting [(num-1)/10] +=1
-    index = label_counting.index(max(label_counting))
-    print label_counting
-    return label_dist[index]
-
+    return label_dist[(num-1)/10]
 
 # ---------------------- Load dataset ---------------------- #
-nba = {}
+nba_stat = []
+nba_labels = []
 
 # reading in data
 for i in range(1999, 2017):
@@ -45,14 +33,16 @@ for i in range(1999, 2017):
 
         # pick out attributes
         stat_list = line.split(",")
-        stat = [stat_list[1]]
+        stat = []
 
-        stat += [stat_list[18]] # WS, win share
+        stat += [convertNum(stat_list[18])] # WS, win share
         stat += [convertNum(stat_list[20]) * 20]  # BPM, Box plus, Minus
-        stat += [stat_list[21]] # VORP, value over replacement player
-        stat += [i]
+        stat += [convertNum(stat_list[21])] # VORP, value over replacement player
 
-        nba[line.split(",")[3]] = stat
+
+        nba_stat.append(np.array(stat))
+        nba_labels.append(return_label(int(stat_list[1])))
+
 
 # ---------------------- Train model ---------------------- #
 # classfication
@@ -62,30 +52,23 @@ for line in file.readlines()[2:60]:
         # stat is in the order of Rank,FG%,3P%,FT%,MP,PTS,TRB,AST,Year
         print [line.split(",")[3]]
         stat_list = line.split(",")
-        stat = [line.split(",")[1]]
 
-        stat += [stat_list[18]] # WS, win share
+        stat = []
+
+        stat += [convertNum(stat_list[18])] # WS, win share
         stat += [convertNum(stat_list[20]) * 20] # BPM
-        stat += [stat_list[21]] # BPM
-        stat += [2003]
+        stat += [convertNum(stat_list[21])] # BPM
 
 # ---------------------- Predict result ---------------------- #
-        result = {}
-        for key in nba.keys():
-            if nba[key][len(nba[key])-1] == int(test_year):
-                continue
-            result[key] = euclideanDistance(nba[key][1:-1],stat[1:-1])
-        result = sorted(result.items(), key = lambda x: x[1])
-        labels = []
-        # set the k here
-        k = 50
+        neigh = KNeighborsClassifier(n_neighbors=50)
+        # nba_stat = np.array(nba_stat)
+        # nsamples, nx, ny = nba_stat.shape
+        # d2_train_dataset = nba_stat.reshape((nsamples,nx*ny))
+        neigh.fit(nba_stat, np.array(nba_labels).reshape(-1, 1))
+        #print np.array(stat).reshape(-1, 1)
 
 # ---------------------- Result visualization ---------------------- #
-        for people in result[:k]:
-            labels.append(int(nba[people[0]][0]))
-        print count_labels(labels)
-
-
+        print neigh.predict(np.array(stat))
 # ---------------------- Evaluate Result ---------------------- #
 # Emprical evaluation:
 # The result is more for entertaining purpose, it gives an approximation of how good a player actually is
