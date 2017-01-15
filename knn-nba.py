@@ -39,10 +39,8 @@ for i in range(1999, 2017):
         stat += [convertNum(stat_list[20]) * 20]  # BPM, Box plus, Minus
         stat += [convertNum(stat_list[21])] # VORP, value over replacement player
 
-
         nba_stat.append(np.array(stat))
         nba_labels.append(return_label(int(stat_list[1])))
-
 
 # ---------------------- Train model ---------------------- #
 # classfication
@@ -61,14 +59,11 @@ for line in file.readlines()[2:60]:
 
 # ---------------------- Predict result ---------------------- #
         neigh = KNeighborsClassifier(n_neighbors=50)
-        # nba_stat = np.array(nba_stat)
-        # nsamples, nx, ny = nba_stat.shape
-        # d2_train_dataset = nba_stat.reshape((nsamples,nx*ny))
-        neigh.fit(nba_stat, np.array(nba_labels).reshape(-1, 1))
-        #print np.array(stat).reshape(-1, 1)
+        neigh.fit(nba_stat, np.array(nba_labels))
 
 # ---------------------- Result visualization ---------------------- #
         print neigh.predict([np.array(stat)])
+
 # ---------------------- Evaluate Result ---------------------- #
 # Emprical evaluation:
 # The result is more for entertaining purpose, it gives an approximation of how good a player actually is
