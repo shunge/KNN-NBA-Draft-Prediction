@@ -4,11 +4,6 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 from matplotlib import pyplot as plt
 
-position_labels = []
-player_features = []
-
-sum = [float(0)] * 11
-
 # ---------------------- Helper functions ---------------------- #
 # convert string into float
 def convertNum(num):
@@ -18,10 +13,14 @@ def convertNum(num):
         return 0
 
 # ---------------------- Load dataset ---------------------- #
+position_labels = []
+player_features = []
+
+sum = [float(0)] * 11
+
 def load_data(data):
     for line in data.readlines()[1:]:
         stat_list = line.split(",")
-        stat = []
 
         position_labels.append(stat_list[6])
         # the feature that we are using are ['p/g', '3/g', 'r/g', 'a/g', 's/g', 'b/g', 'fg%', 'fga/g', 'ft%', 'fta/g', 'to/g']
@@ -41,12 +40,14 @@ for stat in player_features:
     for i, num in enumerate(stat):
         stat[i] = convertNum(stat[i]) / sum[i]
 
-testing_data = open("2014ranking", "r")
 
+
+# ---------------------- Train model ---------------------- #
 wrong = 0
 total = 0
 
-# ---------------------- Train model ---------------------- #
+testing_data = open("2014ranking", "r")
+
 for line in testing_data.readlines()[1:]:
 
     stat_list = line.split(",")
@@ -68,4 +69,4 @@ for line in testing_data.readlines()[1:]:
 
 # ---------------------- Evaluate Result ---------------------- #
 correct_rate = (total - wrong) / float(total)
-print "When the k is 9, the error rate is " + str(correct_rate)
+print "The error rate is " + str(correct_rate)
